@@ -1,0 +1,43 @@
+logging:
+  level:
+   org:
+    springframework:
+      batch: INFO
+
+spring:
+  application:
+    name: dbmigration
+  datasource:
+    url: jdbc:postgresql://65.2.71.162:5432/bank_db
+    username: postgres
+    password: H3!d!sql
+    driver-class-name: org.postgresql.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+        pool-name: PostgresHikariCP
+        maximum-pool-size: 10
+        minimum-idle: 2
+        idle-timeout: 30000
+        connection-timeout: 30000
+        max-lifetime: 1800000
+        auto-commit: true
+        connection-test-query: SELECT 1
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: json-to-postgres-group
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      auto-offset-reset: earliest
+  batch:
+    schema:
+      script: classpath:schema-sqlserver.sql
+    job:
+      enabled: true
+      names: importDataJob
+    jdbc:
+      initialize-schema: always
+app:
+  kafka:
+    topic: database-export-topic
+    batch-size: 100
